@@ -84,7 +84,8 @@ const char *Atom_new(const char *str, int len) {
 	assert(len >= 0);
 	for (h = 0, i = 0; i < len; i++)
 		h = (h<<1) + scatter[(unsigned char)str[i]];
-	h &= NELEMS(buckets)-1;
+	h &= NELEMS(buckets)-1; // secondwtq: why?
+	// orginal: h %= NELEMS(buckets)
 	for (p = buckets[h]; p; p = p->link)
 		if (len == p->len) {
 			for (i = 0; i < len && p->str[i] == str[i]; )
@@ -102,14 +103,21 @@ const char *Atom_new(const char *str, int len) {
 	buckets[h] = p;
 	return p->str;
 }
+
 int Atom_length(const char *str) {
-	struct atom *p;
-	int i;
 	assert(str);
-	for (i = 0; i < NELEMS(buckets); i++)
-		for (p = buckets[i]; p; p = p->link)
-			if (p->str == str)
-				return p->len;
+
+	struct atom *p;
+	int *l = str - ((char *)(p->len) - p->str);
+	unsigned long h;
+	int i;
+	for (h = 0, i = 0; i < *l; i++)
+		h = (h << 1) + scatter[(unsigned char) str[i]];
+	h &= NELEMS(buckets) - 1;
+	for (p = buckets[h]; p; p = p->link)
+		if (p->str == str)
+			return *l;
+
 	assert(0);
 	return 0;
 }
