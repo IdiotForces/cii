@@ -13,7 +13,7 @@ RANLIB=ranlib
 DIFF=diff
 RM=rm -f
 CUSTOM=custom.mk
-EXTRAS=$(BUILDDIR)memcmp$O $(BUILDDIR)memmove$O $(BUILDDIR)strncmp$O
+EXTRAS=$(BUILDDIR)memcmp$O $(BUILDDIR)strncmp$O
 THREADS=$(BUILDDIR)thread$O $(BUILDDIR)swtch$O
 include $(CUSTOM)
 B=$(BUILDDIR)
